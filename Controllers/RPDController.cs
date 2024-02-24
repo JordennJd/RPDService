@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using RPDSerice.Dtos;
+using RPDSerice.Models;
 using RPDSerice.RPDGenerator.Interfaces;
 namespace RPDService.Controllers;
 
@@ -14,7 +14,7 @@ public class RPDController : ControllerBase
 		_RPDGenerator = RPDGenerator;
 	}
 	[HttpGet]
-	public IActionResult GenerateRPD(RPDDto dto)
+	public IActionResult GenerateRPD(RPDBase dto)
 	{
 		_RPDGenerator.GetRPDPdfBytes(dto);
 		return Ok("Hello World");
