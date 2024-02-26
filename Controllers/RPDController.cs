@@ -14,7 +14,7 @@ public class RPDController : ControllerBase
 		_RPDGenerator = RPDGenerator;
 	}
 	[HttpGet]
-	public IActionResult GenerateRPD(RPDBase dto)
+	public IActionResult GenerateRPD(string dto)
 	{
 		_RPDGenerator.GetRPDPdfBytes(dto);
 		return Ok("Hello World");

@@ -3,7 +3,9 @@ using RPDSerice.RPDGenerator.Interfaces;
 using Newtonsoft.Json.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+
 namespace RPDSerice.RPDGenerator.Implementation;
+
 public class RPDGenerator : IRPDGenerator
 {
     const string templateFilePath ="Services/RPDGenerator/template.docx";
@@ -45,6 +47,7 @@ public class RPDGenerator : IRPDGenerator
                 }
             }
         }
+        return new Byte[]{0};
     }
 
     private void ReplacePlaceholderInText(Body body, string placeholder,
@@ -111,6 +114,8 @@ public class RPDGenerator : IRPDGenerator
                 }
             }
         }
+       
     }
+
 	}
-}
+
