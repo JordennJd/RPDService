@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RPDSerice")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1cea0b0c8ef922c389eb81870f29566f4ccfea59")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+376bcd9f20160410215dfccee74789b7727c7194")]
 [assembly: System.Reflection.AssemblyProductAttribute("RPDSerice")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RPDSerice")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

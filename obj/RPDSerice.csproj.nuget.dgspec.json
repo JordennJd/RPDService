@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "M:\\Projects\\RPDService\\RPDSerice\\RPDSerice.csproj": {}
+    "/home/alexbelks/RPDService/RPDSerice.csproj": {}
   },
   "projects": {
-    "M:\\Projects\\RPDService\\RPDSerice\\RPDSerice.csproj": {
+    "/home/alexbelks/RPDService/RPDSerice.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "M:\\Projects\\RPDService\\RPDSerice\\RPDSerice.csproj",
+        "projectUniqueName": "/home/alexbelks/RPDService/RPDSerice.csproj",
         "projectName": "RPDSerice",
-        "projectPath": "M:\\Projects\\RPDService\\RPDSerice\\RPDSerice.csproj",
-        "packagesPath": "C:\\Users\\jordenn\\.nuget\\packages\\",
-        "outputPath": "M:\\Projects\\RPDService\\RPDSerice\\obj\\",
+        "projectPath": "/home/alexbelks/RPDService/RPDSerice.csproj",
+        "packagesPath": "/home/alexbelks/.nuget/packages/",
+        "outputPath": "/home/alexbelks/RPDService/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\jordenn\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/alexbelks/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -38,9 +38,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "DocumentFormat.OpenXml": {
+              "target": "Package",
+              "version": "[3.0.1, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.2, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -58,6 +66,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.1, 8.0.1]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -66,7 +80,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

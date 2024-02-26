@@ -2,5 +2,5 @@ using RPDSerice.Models;
 namespace RPDSerice.RPDGenerator.Interfaces;
 public interface IRPDGenerator
 {
-	Byte[] GetRPDPdfBytes(RPDBase RPDdto);
+	Byte[] GetRPDPdfBytes(string RPDjson);
 }
