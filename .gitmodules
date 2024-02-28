@@ -1,3 +1,3 @@
 [submodule "RPD_time_IT_frontend"]
-	path = RPD_time_IT_frontend
+	path = RPD_time_IT_frontend.Frontend/frontend_rpd_time_it
 	url = https://github.com/evggal/RPD_time_IT_frontend
