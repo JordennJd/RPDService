@@ -30,6 +30,7 @@ public class RPDController : ControllerBase
 	[HttpPost]
 	public IActionResult SearchCriticalInfos(CriticalInfo info)
 	{
-		return Ok(_RpdRepository.GetAllCriticalInfo());
+		Console.WriteLine("hello");
+		return Ok(_RpdRepository.SearchCriticalInfo(info));
 	}
 }

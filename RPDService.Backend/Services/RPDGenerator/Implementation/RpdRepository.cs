@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RPDSerice.Models;
 namespace RPDSerice.RpdRepository.Implementation;
 
@@ -18,26 +19,26 @@ public class RpdRepository
 	
 	public IEnumerable<CriticalInfo> SearchCriticalInfo(CriticalInfo info)
 	{
-		_context.CriticalInfo.Where(i =>
-		(i.Faculty == info.Faculty || info.Faculty == "None") &&
-		(i.SpecialtyNumber == info.SpecialtyNumber || info.SpecialtyNumber == "None") &&
-		(i.SPZ == info.SPZ || info.SPZ == "None") &&
-		(i.FO == info.FO || info.FO == "None") &&
-		(i.GroupName == info.GroupName || info.GroupName == "None") &&
-		(i.Name == info.Name || info.Name == "None") &&
-		(i.NumberOfDepartament == info.NumberOfDepartament || info.NumberOfDepartament == "None") &&
-		(i.TypeOfCourseProject == info.TypeOfCourseProject || info.TypeOfCourseProject == "None") &&
-		(i.CountOfHourLecture == info.CountOfHourLecture || info.CountOfHourLecture == "None") &&
-		(i.CountOfHourPractice == info.CountOfHourPractice || info.CountOfHourPractice == "None") &&
-		(i.CountOfHourLab == info.CountOfHourLab || info.CountOfHourLab == "None") &&
-		(i.CountOfHourCourseProject == info.CountOfHourCourseProject || info.CountOfHourCourseProject == "None") &&
-		(i.CountOfHourCourseWork == info.CountOfHourCourseWork || info.CountOfHourCourseWork == "None") &&
-		(i.ExamHours == info.ExamHours || info.ExamHours == "None") &&
-		(i.SRS == info.SRS || info.SRS == "None") &&
-		(i.CountOfHourCourseWork == info.CountOfHourCourseWork || info.CountOfHourCourseWork == "None") &&
-		(i.TypeOfControl == info.TypeOfControl || info.TypeOfControl == "None")
+		var list = _context.CriticalInfo.Where(i =>
+		(i.Faculty == info.Faculty || info.Faculty == "None" || info.Faculty.IsNullOrEmpty()) &&
+		(i.SpecialtyNumber == info.SpecialtyNumber || info.SpecialtyNumber == "None"|| info.Faculty.IsNullOrEmpty()) &&
+		(i.SPZ == info.SPZ || info.SPZ == "None"|| info.SPZ.IsNullOrEmpty()) &&
+		(i.FO == info.FO || info.FO == "None"|| info.FO.IsNullOrEmpty()) &&
+		(i.GroupName == info.GroupName || info.GroupName == "None"|| info.GroupName.IsNullOrEmpty()) &&
+		(i.Name == info.Name || info.Name == "None"|| info.Name.IsNullOrEmpty()) &&
+		(i.NumberOfDepartament == info.NumberOfDepartament || info.NumberOfDepartament == "None"|| info.NumberOfDepartament.IsNullOrEmpty()) &&
+		(i.TypeOfCourseProject == info.TypeOfCourseProject || info.TypeOfCourseProject == "None"|| info.TypeOfCourseProject.IsNullOrEmpty()) &&
+		(i.CountOfHourLecture == info.CountOfHourLecture || info.CountOfHourLecture == "None"|| info.CountOfHourLecture.IsNullOrEmpty()) &&
+		(i.CountOfHourPractice == info.CountOfHourPractice || info.CountOfHourPractice == "None"|| info.CountOfHourPractice.IsNullOrEmpty()) &&
+		(i.CountOfHourLab == info.CountOfHourLab || info.CountOfHourLab == "None"|| info.CountOfHourLab.IsNullOrEmpty()) &&
+		(i.CountOfHourCourseProject == info.CountOfHourCourseProject || info.CountOfHourCourseProject == "None"|| info.CountOfHourCourseProject.IsNullOrEmpty()) &&
+		(i.CountOfHourCourseWork == info.CountOfHourCourseWork || info.CountOfHourCourseWork == "None"|| info.CountOfHourCourseWork.IsNullOrEmpty()) &&
+		(i.ExamHours == info.ExamHours || info.ExamHours == "None"|| info.Faculty.IsNullOrEmpty()) &&
+		(i.SRS == info.SRS || info.SRS == "None"|| info.SRS.IsNullOrEmpty()) &&
+		(i.CountOfHourCourseWork == info.CountOfHourCourseWork || info.CountOfHourCourseWork == "None"|| info.CountOfHourCourseWork.IsNullOrEmpty()) &&
+		(i.TypeOfControl == info.TypeOfControl || info.TypeOfControl == "None"|| info.TypeOfControl.IsNullOrEmpty())
 		);
 		
-		return _context.CriticalInfo.ToList();
+		return list;
 	}
 }
