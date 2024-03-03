@@ -21,7 +21,7 @@ builder.Services.AddSingleton<IRPDGenerator, RPDGenerator>();
 builder.Services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer(MyConfig.GetValue<string>("ConnectionStrings:"+Environment.MachineName)));
 
 Log.Logger = new LoggerConfiguration()
-	.WriteTo.File(@$"{MyConfig.GetValue<string>($"Path:Logging:{Environment.MachineName}" )}/logs.txt")
+	.WriteTo.File(@$"{MyConfig.GetValue<string>($"Path:Logging:{Environment.MachineName}")}/logs.txt")
 	.WriteTo.Console()
 	.MinimumLevel.Debug()
 	.CreateLogger();

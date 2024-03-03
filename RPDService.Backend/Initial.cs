@@ -51,10 +51,7 @@ public static class Initial
 					CountOfHourCourseWork = stringData[12],
 					ExamHours = stringData[13],
 					SRS = stringData[14],
-					Test = boolData[0],
-					DiffTest = boolData[1],
-					KandExam = boolData[2],
-					Exam = boolData[3],
+					TypeOfControl = CriticalInfo.GetTypeOfExam(boolData[0], boolData[1], boolData[2], boolData[3])
 				});
 				Console.WriteLine("saved");
 

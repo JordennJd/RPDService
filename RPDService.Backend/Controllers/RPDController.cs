@@ -10,7 +10,6 @@ public class RPDController : ControllerBase
 {
 	private readonly IRPDGenerator _RPDGenerator;
 	private readonly RpdRepository _RpdRepository;
-
 	public RPDController(IRPDGenerator RPDGenerator, RpdRepository RpdRepository)
 	{
 		_RpdRepository = RpdRepository;
@@ -24,6 +23,12 @@ public class RPDController : ControllerBase
 	}
 	[HttpGet]
 	public IActionResult GetCriticalInfos()
+	{
+		return Ok(_RpdRepository.GetAllCriticalInfo());
+	}
+	
+	[HttpPost]
+	public IActionResult SearchCriticalInfos(CriticalInfo info)
 	{
 		return Ok(_RpdRepository.GetAllCriticalInfo());
 	}

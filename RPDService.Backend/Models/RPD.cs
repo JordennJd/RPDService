@@ -30,11 +30,16 @@ public class CriticalInfo
 	public string CountOfHourCourseWork { get; set; }
 	public string ExamHours { get; set; }
 	public string SRS { get; set; }
-	public bool Test { get; set; }
-	public bool DiffTest { get; set; }
-	public bool KandExam { get; set; }
-	public bool Exam { get; set; }
-
+	public string TypeOfControl { get; set; }
+	
+	public static string GetTypeOfExam(bool Test, bool DiffTest, bool KandExam, bool Exam)
+	{
+		if (Test) return "test";
+		if (DiffTest) return "difftest";
+		if (KandExam) return "kandexam";
+		if (Exam) return "Exam";
+		throw new ArgumentException("All types are false");
+	}
 
 }
 
