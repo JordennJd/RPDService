@@ -20,12 +20,13 @@ public static class Initial
 			var colCount = worksheet.Dimension.Columns;
 
 
-			List<string> stringData = new List<string>();
-			List<bool> boolData = new List<bool>();
+
 			
 			// if(worksheet.Cells[228,226] != null) return;
 			for (int row = 2; row <= rowCount; row++)
 			{
+				List<string> stringData = new List<string>();
+				List<bool> boolData = new List<bool>();
 				for (int col = 1; col <= 15; col++)
 				{
 					// Получаем значение ячейки
@@ -61,6 +62,7 @@ public static class Initial
 					Exam = boolData[3],
 				});
 				Console.WriteLine("saved");
+				package.Dispose();
 			}
 			db.Database.ExecuteSqlRaw("INSERT INTO Flags (isExcelDataInstalled) VALUES (1)");
 			db.SaveChanges();
