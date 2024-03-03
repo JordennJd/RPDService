@@ -11,10 +11,31 @@ public class RpdRepository
 	{
 		_context = context;
 	}
+	
+	public void CreateRPD(RPD rpd)
+	{
+		var CriticalInfos = SearchCriticalInfo(rpd.CriticalInfo);
+		if(CriticalInfos.Count()!= 1)
+		{
+			throw new ArgumentException("cant identify rpd critical template");
+		}
+		rpd.CriticalInfo.Id = CriticalInfos.ElementAt(0).Id;
+		rpd.CriticalInfo = CriticalInfos.ElementAt(0);
+		_context.Add(rpd);
+		_context.SaveChanges();
+	}
 
 	public IEnumerable<CriticalInfo> GetAllCriticalInfo()
 	{
 		return _context.CriticalInfo.ToList();
+	}
+	
+	public IEnumerable<RPD> GetAllRpd()
+	{
+		return _context.RPDs
+		.Include(r=>r.RpdInfo)
+		.Include(r=>r.CriticalInfo)
+		.ToList();
 	}
 	public IEnumerable<CriticalInfo> SearchCriticalInfo(CriticalInfo info)
 	{

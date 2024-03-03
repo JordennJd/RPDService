@@ -7,6 +7,7 @@ public class ApplicationDbContext : DbContext
 {
 	public DbSet<RPD> RPDs {get;set;}
 	public DbSet<CriticalInfo> CriticalInfo { get; set; }
+	public DbSet<RpdInfo> RpdInfo { get; set; }
 
 	public DbSet<Flags> Flags { get; set; }
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

@@ -1,20 +1,20 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace RPDSerice.Models;
 public class RPD : RPDBase
 {
-	[Key]
+	[Key] [JsonIgnore]
 	public int Id { get; set; }
 	public int CriticalInfoId { get; set; }
-	public int RpdlInfoId { get; set; }
+	public int RpdInfoId { get; set; }
 	public CriticalInfo CriticalInfo { get; set; }
-	public RpdInfo RpdInfo { get; set; }
+	public RpdInfo? RpdInfo { get; set; }
 }
 
 public class CriticalInfo
 {
-	[Key]
-	
+	[Key] [JsonIgnore]
 	public int Id { get; set; }
 	public string? Faculty { get; set; }
 	public string? SpecialtyNumber { get; set; }
@@ -46,6 +46,8 @@ public class CriticalInfo
 
 public class RpdInfo
 {
+	[JsonIgnore]
 	public int Id { get; set; }
+	public string TestProp { get; set; } = "test";
 
 }

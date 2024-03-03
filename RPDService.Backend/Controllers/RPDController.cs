@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RPDSerice.Models;
 using RPDSerice.RPDGenerator.Interfaces;
 using RPDSerice.RpdRepository.Implementation;
@@ -15,10 +16,16 @@ public class RPDController : ControllerBase
 		_RpdRepository = RpdRepository;
 		_RPDGenerator = RPDGenerator;
 	}
-	[HttpGet]
-	public IActionResult GenerateRPD(string dto)
+	[HttpPost]
+	public IActionResult GenerateRPD(CriticalInfo dto)
 	{
-		_RPDGenerator.GetRPDPdfBytes(dto);
+		_RPDGenerator.GetRPDPdfBytes(JsonConvert.SerializeObject(dto));
+		return Ok("Hello World");
+	}
+	[HttpPost]
+	public IActionResult CreateRPD(RPD rpd)
+	{
+		_RpdRepository.CreateRPD(rpd);
 		return Ok("Hello World");
 	}
 	[HttpGet]
@@ -27,10 +34,15 @@ public class RPDController : ControllerBase
 		return Ok(_RpdRepository.GetAllCriticalInfo());
 	}
 	
+	[HttpGet]
+	public IActionResult GetAllRpd()
+	{
+		return Ok(_RpdRepository.GetAllRpd());
+	}
+	
 	[HttpPost]
 	public IActionResult SearchCriticalInfos(CriticalInfo info)
 	{
-		Console.WriteLine("hello");
 		return Ok(_RpdRepository.SearchCriticalInfo(info));
 	}
 }
