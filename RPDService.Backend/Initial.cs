@@ -6,32 +6,28 @@ public static class Initial
 {
 	public static void Init(IServiceProvider serviceProvider, IConfiguration configuration)
 	{
+		InitalDatabaseFromExcelTable(serviceProvider, configuration);
+	}
+
+	private static void InitalDatabaseFromExcelTable(IServiceProvider serviceProvider, IConfiguration configuration)
+	{
 		string filePath = configuration.GetValue<string>("Path:ExcelFile:" + Environment.MachineName);
 		var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
-		// Путь к файлу Excel
+
 		if (db.Flags.Count(f => f.isExcelDataInstalled) > 0) return;
 		using (var package = new ExcelPackage(new FileInfo(filePath)))
 		{
-			// Получаем доступ к рабочему листу (первый лист в книге)
 			var worksheet = package.Workbook.Worksheets[0];
-
-			// Определяем размеры таблицы
 			var rowCount = worksheet.Dimension.Rows;
 			var colCount = worksheet.Dimension.Columns;
-
-
-
-			
-			// if(worksheet.Cells[228,226] != null) return;
 			for (int row = 2; row <= rowCount; row++)
 			{
 				List<string> stringData = new List<string>();
 				List<bool> boolData = new List<bool>();
 				for (int col = 1; col <= 15; col++)
 				{
-					// Получаем значение ячейки
 					stringData.Add(worksheet.Cells[row, col].Value.ToString());
-					// Console.WriteLine(worksheet.Cells[row, col].Value);
+
 				}
 				for (int col = 16; col <= 19; col++)
 				{
@@ -55,7 +51,6 @@ public static class Initial
 					CountOfHourCourseWork = stringData[12],
 					ExamHours = stringData[13],
 					SRS = stringData[14],
-					
 					Test = boolData[0],
 					DiffTest = boolData[1],
 					KandExam = boolData[2],
@@ -66,9 +61,6 @@ public static class Initial
 			}
 			db.Database.ExecuteSqlRaw("INSERT INTO Flags (isExcelDataInstalled) VALUES (1)");
 			db.SaveChanges();
-
-
 		}
-
 	}
 }
