@@ -38,7 +38,7 @@ public class CriticalInfo
 		if (Test) return "test";
 		if (DiffTest) return "difftest";
 		if (KandExam) return "kandexam";
-		if (Exam) return "Exam";
+		if (Exam) return "exam";
 		throw new ArgumentException("All types are false");
 	}
 

@@ -16,7 +16,6 @@ public class RpdRepository
 	{
 		return _context.CriticalInfo.ToList();
 	}
-	
 	public IEnumerable<CriticalInfo> SearchCriticalInfo(CriticalInfo info)
 	{
 		var list = _context.CriticalInfo.Where(i =>
