@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RPDSerice.Models;
 using RPDSerice.RPDGenerator.Interfaces;
+using RPDSerice.RpdRepository.Implementation;
 namespace RPDService.Controllers;
 
 [ApiController]
@@ -8,9 +9,11 @@ namespace RPDService.Controllers;
 public class RPDController : ControllerBase
 {
 	private readonly IRPDGenerator _RPDGenerator;
-	
-	public RPDController(IRPDGenerator RPDGenerator)
+	private readonly RpdRepository _RpdRepository;
+
+	public RPDController(IRPDGenerator RPDGenerator, RpdRepository RpdRepository)
 	{
+		_RpdRepository = RpdRepository;
 		_RPDGenerator = RPDGenerator;
 	}
 	[HttpGet]
@@ -18,5 +21,10 @@ public class RPDController : ControllerBase
 	{
 		_RPDGenerator.GetRPDPdfBytes(dto);
 		return Ok("Hello World");
+	}
+	[HttpGet]
+	public IActionResult GetCriticalInfos()
+	{
+		return Ok(_RpdRepository.GetAllCriticalInfo());
 	}
 }
