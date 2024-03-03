@@ -62,7 +62,7 @@ public static class Initial
 					Exam = boolData[3],
 				});
 				Console.WriteLine("saved");
-				package.Dispose();
+
 			}
 			db.Database.ExecuteSqlRaw("INSERT INTO Flags (isExcelDataInstalled) VALUES (1)");
 			db.SaveChanges();
