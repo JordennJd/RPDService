@@ -6,9 +6,10 @@ public class RPD : RPDBase
 {
 	[Key] [JsonIgnore]
 	public int Id { get; set; }
+	public int CreatorId { get; set; }
 	public int CriticalInfoId { get; set; }
 	public int RpdInfoId { get; set; }
-	public CriticalInfo CriticalInfo { get; set; }
+	public required CriticalInfo CriticalInfo { get; set; }
 	public RpdInfo? RpdInfo { get; set; }
 }
 

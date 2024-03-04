@@ -21,6 +21,7 @@ public class RpdRepository
 		}
 		rpd.CriticalInfo.Id = CriticalInfos.ElementAt(0).Id;
 		rpd.CriticalInfo = CriticalInfos.ElementAt(0);
+		rpd.CreatorId = 0;
 		_context.Add(rpd);
 		_context.SaveChanges();
 	}

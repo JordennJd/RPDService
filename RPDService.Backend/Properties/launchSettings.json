@@ -9,6 +9,16 @@
     }
   },
   "profiles": {
+    "docker": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7014",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      }
+    },
     "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,

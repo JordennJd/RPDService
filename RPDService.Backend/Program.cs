@@ -8,9 +8,17 @@ using RPDSerice.RpdRepository.Implementation;
 var builder = WebApplication.CreateBuilder(args);
 
 IConfigurationRoot configuration = new ConfigurationManager();
-var MyConfig = new ConfigurationBuilder()
-.AddJsonFile("appsettings.json").Build();
 
+var configurationBuilder = new ConfigurationBuilder();
+IConfigurationRoot MyConfig;
+if(Environment.GetEnvironmentVariable("IS_PROD") == "1")
+{
+	MyConfig = configurationBuilder.AddJsonFile("appsettings.Production.json").Build();
+}
+else
+{
+	MyConfig = configurationBuilder.AddJsonFile("appsettings.json").Build();
+}
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
@@ -18,17 +26,22 @@ builder.Services.AddTransient<RpdRepository>();
 builder.Services.AddTransient<IRPDGenerator, RPDGenerator>();
 builder.Services.AddScoped<IRPDGenerator, RPDGenerator>();
 builder.Services.AddSingleton<IRPDGenerator, RPDGenerator>();
-builder.Services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer(MyConfig.GetValue<string>("ConnectionStrings:"+Environment.MachineName)));
+builder.Services.AddDbContext<ApplicationDbContext>(
+	opt => opt.UseSqlServer(MyConfig.GetValue<string>("ConnectionStrings:" + Helper.GetMachineName()), act=>
+	{
+		act.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+		
+	}));
 
 Log.Logger = new LoggerConfiguration()
-	.WriteTo.File(@$"{MyConfig.GetValue<string>($"Path:Logging:{Environment.MachineName}")}/logs.txt")
+	.WriteTo.File(@$"{MyConfig.GetValue<string>($"Path:Logging:{Helper.GetMachineName()}")}/logs.txt")
 	.WriteTo.Console()
 	.MinimumLevel.Debug()
 	.CreateLogger();
 	
 builder.Host.UseSerilog();
 
-Log.Information(@$"{MyConfig.GetValue<string>($"Path:Logging:{Environment.MachineName}")}/logs.txt");
+Log.Information(@$"{MyConfig.GetValue<string>($"Path:Logging:{Helper.GetMachineName()}")}/logs.txt");
 
 var app = builder.Build();
 

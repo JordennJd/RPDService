@@ -11,7 +11,7 @@ public static class Initial
 
 	private static void InitalDatabaseFromExcelTable(IServiceProvider serviceProvider, IConfiguration configuration)
 	{
-		string filePath = configuration.GetValue<string>("Path:ExcelFile:" + Environment.MachineName);
+		string filePath = configuration.GetValue<string>("Path:ExcelFile:" + Helper.GetMachineName());
 		var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
 		if (db.Flags.Count(f => f.isExcelDataInstalled) > 0) return;
