@@ -11,6 +11,18 @@ IConfigurationRoot configuration = new ConfigurationManager();
 
 var configurationBuilder = new ConfigurationBuilder();
 IConfigurationRoot MyConfig;
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy(name: MyAllowSpecificOrigins,
+		policy  =>
+		{
+			policy.WithOrigins("https://localhost:7223" ,"http://185.192.246.20","http://localhost:3000", "https://saxscalc.ru")
+				.AllowAnyHeader() 
+				.AllowCredentials();
+		});
+});
 if(Environment.GetEnvironmentVariable("IS_PROD") == "1")
 {
 	MyConfig = configurationBuilder.AddJsonFile("appsettings.Production.json").Build();
@@ -53,6 +65,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.MapControllers();
 

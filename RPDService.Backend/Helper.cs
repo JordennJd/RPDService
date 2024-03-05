@@ -1,6 +1,6 @@
 public static class Helper
 {
-	static string[] Names = new string[]
+	static string[] Names = new[]
 	{
 		"MacBook-Air-Danil", "JORDENN-PC"
 	};

@@ -6,8 +6,11 @@ public class RPD : RPDBase
 {
 	[Key] [JsonIgnore]
 	public int Id { get; set; }
+	[JsonIgnore]
 	public int CreatorId { get; set; }
+	[JsonIgnore]
 	public int CriticalInfoId { get; set; }
+	[JsonIgnore]
 	public int RpdInfoId { get; set; }
 	public required CriticalInfo CriticalInfo { get; set; }
 	public RpdInfo? RpdInfo { get; set; }
@@ -42,6 +45,8 @@ public class CriticalInfo
 		if (Exam) return "exam";
 		throw new ArgumentException("All types are false");
 	}
+	
+	
 
 }
 

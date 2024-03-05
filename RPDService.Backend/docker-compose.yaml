@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    environment:
+      SA_PASSWORD: "123-saPassword"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - app_network
+
+  rpdservice:
+    image: jordenndev/rpdservice
+      
+    container_name: RpdService
+    ports:
+      - "7777:8080"
+    depends_on:
+      - mssql
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

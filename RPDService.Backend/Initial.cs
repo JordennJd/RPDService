@@ -34,6 +34,7 @@ public static class Initial
 					Console.WriteLine(worksheet.Cells[row, col].Value);
 					boolData.Add(worksheet.Cells[row, col].Value.ToString() == "True" ? true : false);
 				}
+				
 				db.Add(new CriticalInfo()
 				{
 					Faculty = stringData[0],
@@ -43,14 +44,15 @@ public static class Initial
 					GroupName = stringData[4],
 					Name = stringData[5],
 					NumberOfDepartament = stringData[6],
-					TypeOfCourseProject = stringData[7],
-					CountOfHourLecture = stringData[8],
-					CountOfHourPractice = stringData[9],
-					CountOfHourLab = stringData[10],
-					CountOfHourCourseProject = stringData[11],
-					CountOfHourCourseWork = stringData[12],
+					CountOfHourLecture = stringData[7],
+					CountOfHourPractice = stringData[8],
+					CountOfHourLab = stringData[9],
+					CountOfHourCourseProject = stringData[10],
+					CountOfHourCourseWork = stringData[11],
+					SRS = stringData[12],
 					ExamHours = stringData[13],
-					SRS = stringData[14],
+					TypeOfCourseProject = stringData[14],
+
 					TypeOfControl = CriticalInfo.GetTypeOfExam(boolData[0], boolData[1], boolData[2], boolData[3])
 				});
 				Console.WriteLine("saved");
