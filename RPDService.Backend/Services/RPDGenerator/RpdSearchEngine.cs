@@ -59,7 +59,9 @@ public class RpdSearchEngine
 		(i.CriticalInfo.CountOfHourCourseWork == info.CountOfHourCourseWork || info.CountOfHourCourseWork == "None" || info.CountOfHourCourseWork.IsNullOrEmpty()) &&
 		(i.CriticalInfo.TypeOfControl == info.TypeOfControl || info.TypeOfControl == "None" || info.TypeOfControl.IsNullOrEmpty()) &&
 
-		(i.RpdInfo == null ? true : (i.RpdInfo.TestProp == RpdInfo.TestProp || RpdInfo.TestProp == "None" || RpdInfo.TestProp.IsNullOrEmpty()))
+		(i.RpdInfo == null ? true : (i.RpdInfo.LearningGoals == RpdInfo.LearningGoals || RpdInfo.LearningGoals == "None" || RpdInfo.LearningGoals.IsNullOrEmpty()))&&
+		(i.RpdInfo == null ? true : (i.RpdInfo.CharacteristicsOfTheSubjectArea == RpdInfo.CharacteristicsOfTheSubjectArea || RpdInfo.CharacteristicsOfTheSubjectArea == "None" || RpdInfo.CharacteristicsOfTheSubjectArea.IsNullOrEmpty()))&&
+		(i.RpdInfo == null ? true : (i.RpdInfo.RequaredOrNotRequiared == RpdInfo.RequaredOrNotRequiared || RpdInfo.RequaredOrNotRequiared == "None" || RpdInfo.RequaredOrNotRequiared.IsNullOrEmpty()))
 		);
 
 		return list.ToList();

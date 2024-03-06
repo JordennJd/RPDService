@@ -24,7 +24,7 @@ public static class Initial
 			{
 				List<string> stringData = new List<string>();
 				List<bool> boolData = new List<bool>();
-				for (int col = 1; col <= 15; col++)
+				for (int col = 1; col <= 16; col++)
 				{
 					stringData.Add(worksheet.Cells[row, col].Value.ToString());
 
@@ -52,8 +52,9 @@ public static class Initial
 					SRS = stringData[12],
 					ExamHours = stringData[13],
 					TypeOfCourseProject = stringData[14],
-
-					TypeOfControl = CriticalInfo.GetTypeOfExam(boolData[0], boolData[1], boolData[2], boolData[3])
+					Zach = stringData[15],
+					TypeOfControl = CriticalInfo.GetTypeOfExam(boolData[0], boolData[1], boolData[2], boolData[3]),
+					
 				});
 				Console.WriteLine("saved");
 
