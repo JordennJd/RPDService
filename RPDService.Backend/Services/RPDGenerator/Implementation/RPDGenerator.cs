@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Diagnostics;
+using  RPDSerice.Models;
 
 namespace RPDSerice.RPDGenerator.Implementation;
 
@@ -21,7 +22,7 @@ public class RPDGenerator : IRPDGenerator
                         "Services/RPDGenerator/RPDTemplate/output.pdf";
     }
 
-    public Byte[] GetRPDPdfBytes(string JsonRPD)
+    public Byte[] GetRPDPdfBytes(RPD rpd)
     {
         try
         {
@@ -37,9 +38,12 @@ public class RPDGenerator : IRPDGenerator
                        WordprocessingDocument.Open(tempFilePath, true))
             {
                 var body = doc.MainDocumentPart.Document.Body;
-
-                // Замена плейсхолдеров в тексте
-                
+                var stringProperties = typeof(CriticalInfo).GetProperties()
+            .Where(prop => prop.PropertyType == typeof(string))
+            .Select(prop => new {prop.Name, Value = prop.GetValue(rpd.CriticalInfo)?.ToString() });
+               foreach (var stringProperty in stringProperties) {
+                   ReplacePlaceholderInText(body, $"{{{stringProperty.Name}}}" , stringProperty.Value);
+               };
             }
             ConvertToPdfUsingLibreOffice(tempFilePath, outputPdfPath);
             if (!File.Exists(outputPdfPath))
@@ -70,20 +74,13 @@ public class RPDGenerator : IRPDGenerator
     private void ReplacePlaceholderInText(Body body, string placeholder,
                                           string text)
     {
-        var paragraphs = body.Elements<Paragraph>();
-        foreach (var paragraph in paragraphs)
-        {
-            foreach (var run in paragraph.Elements<Run>())
+            // Поиск текстовых элементов, содержащих искомый текст
+            var textsContainingSearchText = body.Descendants<Text>()
+                                                .Where(t => t.Text.Contains(placeholder));
+            foreach (var textElement in textsContainingSearchText)
             {
-                foreach (var textElement in run.Elements<Text>())
-                {
-                    if (textElement.Text.Contains(placeholder))
-                    {
-                        textElement.Text = textElement.Text.Replace(placeholder, text);
-                    }
-                }
+               textElement.Text = textElement.Text.Replace(placeholder, text);
             }
-        }
     }
 
     private void AddRowsToTable(Body body, int tableIndex, JArray rowsData)

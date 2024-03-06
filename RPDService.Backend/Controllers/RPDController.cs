@@ -21,9 +21,9 @@ public class RPDController : ControllerBase
 		_RPDGenerator = RPDGenerator;
 	}
 	[HttpPost]
-	public IActionResult GenerateRPD(CriticalInfo dto)
+	public IActionResult GenerateRPD(RPD rpd)
 	{
-		_RPDGenerator.GetRPDPdfBytes(JsonConvert.SerializeObject(dto));
+		_RPDGenerator.GetRPDPdfBytes(rpd);
 		return Ok("Hello World");
 	}
 	[HttpPost]
