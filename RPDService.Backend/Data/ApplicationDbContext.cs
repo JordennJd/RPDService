@@ -15,7 +15,8 @@ public class ApplicationDbContext : DbContext
 	{
 		try
 		{
-			Database.EnsureCreated();
+			// Database.EnsureDeleted();
+			// Database.EnsureCreated();
 
 		}
 		catch {
