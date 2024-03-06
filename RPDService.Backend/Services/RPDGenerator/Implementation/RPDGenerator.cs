@@ -9,106 +9,41 @@ namespace RPDSerice.RPDGenerator.Implementation;
 
 public class RPDGenerator : IRPDGenerator
 {
-	string templateFilePath;
-	string tempFilePath;
-	string outputPdfPath;
-	public RPDGenerator(IConfiguration configrution)
-	{
-		templateFilePath = configrution["Path:templateFilePath:" + Environment.MachineName] ??
-						   "Services/RPDGenerator/RPDTemplate/Template.docx";
-		tempFilePath = configrution["Path:tempFilePath:" + Environment.MachineName] ??
-					   "Services/RPDGenerator/RPDTemplate/temp.docx";
-		outputPdfPath = configrution["Path:outputPdfPath:" + Environment.MachineName] ??
-						"Services/RPDGenerator/RPDTemplate/output.pdf";
-	}
+    string templateFilePath;
+    string tempFilePath;
+    string outputPdfPath;
+    public RPDGenerator(IConfiguration configrution)
+    {
+        templateFilePath =
+            configrution["Path:templateFilePath:" + Environment.MachineName] ??
+            "Services/RPDGenerator/RPDTemplate/Template.docx";
+        tempFilePath =
+            configrution["Path:tempFilePath:" + Environment.MachineName] ??
+            "Services/RPDGenerator/RPDTemplate/temp.docx";
+        outputPdfPath =
+            configrution["Path:outputPdfPath:" + Environment.MachineName] ??
+            "Services/RPDGenerator/RPDTemplate/output.pdf";
+    }
 
-	public Byte[] GetRPDPdfBytes(RPD rpd)
-	{
-		try
-		{
-			if (!File.Exists(templateFilePath))
-			{
-				throw new FileNotFoundException(
-					$"Шаблонный файл не найден: {templateFilePath}");
-			}
-			File.Copy(templateFilePath, tempFilePath, true);
+    public Byte[] GetRPDPdfBytes(RPD rpd)
+    {
+        try
+        {
+            if (!File.Exists(templateFilePath))
+            {
+                throw new FileNotFoundException(
+                    $"Шаблонный файл не найден: {templateFilePath}");
+            }
+            File.Copy(templateFilePath, tempFilePath, true);
 
             // Открытие документа
             using (WordprocessingDocument doc =
-                       WordprocessingDocument.Open(tempFilePath, true))
-            {
-                var body = doc.MainDocumentPart.Document.Body;
-                var stringProperties =
-                    typeof(CriticalInfo)
-                        .GetProperties()
-                        .Where(prop => prop.PropertyType == typeof(string))
-                        .Select(prop => new
-                        {
-                            prop.Name,
-                            Value = prop.GetValue(rpd.CriticalInfo)?.ToString()
-                        });
-                var listOfStringProperties =
-                    typeof(CriticalInfo)
-                        .GetProperties()
-                        .Where(prop => prop.PropertyType.IsGenericType &&
-                                       prop.PropertyType.GetGenericTypeDefinition() ==
-                                           typeof(List<>) &&
-                                       prop.PropertyType.GenericTypeArguments[0] ==
-                                           typeof(string))
-                        .Select(prop => new
-                        {
-                            prop.Name,
-                            Value = (List<string>)prop.GetValue(
-                                                  rpd.CriticalInfo)
-                        });
-                var listOfListOfStringProperties =
-                    typeof(CriticalInfo)
-                        .GetProperties()
-                        .Where(prop =>
-                                   prop.PropertyType.IsGenericType &&
-                                   prop.PropertyType.GetGenericTypeDefinition() ==
-                                       typeof(List<>) &&
-                                   prop.PropertyType.GenericTypeArguments[0]
-                                       .IsGenericType &&
-                                   prop.PropertyType.GenericTypeArguments[0]
-                                           .GetGenericTypeDefinition() ==
-                                       typeof(List<>) &&
-                                   prop.PropertyType.GenericTypeArguments[0]
-                                           .GenericTypeArguments[0] == typeof(string))
-                        .Select(prop => new
-                        {
-                            prop.Name,
-                            Value = (List<List<string>>)prop.GetValue(
-                                                  rpd.CriticalInfo)
-                        });
+                       WordprocessingDocument.Open(tempFilePath, true)) { 
+                ReplaceOnRpd(doc, rpd.CriticalInfo );
+                ReplaceOnRpd(doc, rpd.RpdInfo);
+            }
 
-                foreach (var stringProperty in stringProperties)
-                {
-                    ReplacePlaceholderInText(body, $"{{{stringProperty.Name}}}",
-                                             stringProperty.Value);
-                }
-                foreach (var listOfStringProperty in listOfStringProperties)
-                {
-                    
-                    InsertEnumerationItemsInText(doc, $"{{{listOfStringProperty.Name}}}",
-                                                 listOfStringProperty.Value);
-                }
-                foreach (var listOfListOfStringProperty in
-                             listOfListOfStringProperties)
-                {
-                    AddRowsToTable(body,
-                                   FindTableByPlaceholder(
-                                       doc, $"{{{listOfListOfStringProperty.Name}}}"),
-                                   listOfListOfStringProperty.Value);
-                }
-            }
-            ConvertToPdfUsingLibreOffice(tempFilePath, outputPdfPath);
-            if (!File.Exists(outputPdfPath))
-            {
-                throw new FileNotFoundException(
-                    $"Сгенерированный PDF файл не найден: {outputPdfPath}");
-            }
-            byte[] pdfBytes = File.ReadAllBytes(outputPdfPath);
+            byte[] pdfBytes = File.ReadAllBytes(tempFilePath);
 
             return pdfBytes;
         }
@@ -121,13 +56,79 @@ public class RPDGenerator : IRPDGenerator
         finally
         {
             // Очистка: удаляем временные файлы, если они существуют
-            if (File.Exists(tempFilePath))
-                File.Delete(tempFilePath);
-            if (File.Exists(outputPdfPath))
-                File.Delete(outputPdfPath);
+            // if (File.Exists(tempFilePath))
+            //     File.Delete(tempFilePath);
+            // if (File.Exists(outputPdfPath))
+            //     File.Delete(outputPdfPath);
         }
     }
+    private void ReplaceOnRpd<Type>(WordprocessingDocument doc, Type rpd)  where Type : class
+    {
+        var body = doc.MainDocumentPart.Document.Body;
+        var stringProperties =
+            typeof(Type)
+                .GetProperties()
+                .Where(prop => prop.PropertyType == typeof(string))
+                .Select(prop => new
+                {
+                    prop.Name,
+                    Value = prop.GetValue(rpd)?.ToString()
+                });
+        var listOfStringProperties =
+            typeof(Type)
+                .GetProperties()
+                .Where(prop => prop.PropertyType.IsGenericType &&
+                               prop.PropertyType.GetGenericTypeDefinition() ==
+                                   typeof(List<>) &&
+                               prop.PropertyType.GenericTypeArguments[0] ==
+                                   typeof(string))
+                .Select(prop => new
+                {
+                    prop.Name,
+                    Value = (List<string>)prop.GetValue(rpd)
+                });
+        var listOfListOfStringProperties =
+            typeof(Type)
+                .GetProperties()
+                .Where(
+                    prop =>
+                        prop.PropertyType.IsGenericType &&
+                        prop.PropertyType.GetGenericTypeDefinition() ==
+                            typeof(List<>) &&
+                        prop.PropertyType.GenericTypeArguments[0].IsGenericType &&
+                        prop.PropertyType.GenericTypeArguments[0]
+                                .GetGenericTypeDefinition() == typeof(List<>) &&
+                        prop.PropertyType.GenericTypeArguments[0]
+                                .GenericTypeArguments[0] == typeof(string))
+                .Select(prop => new
+                {
+                    prop.Name,
+                    Value = (List<List<string>>)prop.GetValue(
+                                          rpd)
+                });
 
+        foreach (var stringProperty in stringProperties)
+        {
+            if(stringProperty.Value == null) continue;
+            ReplacePlaceholderInText(body, $"{{{stringProperty.Name}}}",
+                                     stringProperty.Value);
+        }
+        foreach (var listOfStringProperty in listOfStringProperties)
+        {
+
+            if(listOfStringProperty.Value == null) continue;
+            InsertEnumerationItemsInText(doc, $"{{{listOfStringProperty.Name}}}",
+                                         listOfStringProperty.Value);
+        }
+        foreach (var listOfListOfStringProperty in listOfListOfStringProperties)
+        {
+            if(listOfListOfStringProperty.Value ==null) continue;
+            AddRowsToTable(
+                body,
+                FindTableByPlaceholder(doc, $"{{{listOfListOfStringProperty.Name}}}"),
+                listOfListOfStringProperty.Value);
+        }
+    }
     private void ReplacePlaceholderInText(Body body, string placeholder,
                                           string text)
     {
@@ -146,13 +147,12 @@ public class RPDGenerator : IRPDGenerator
 
         // Получаем таблицу по индексу
 
-
-		if (table != null)
-		{
-			// Получаем текущее количество строк и столбцов в таблице
-			int currentRowCount = table.Elements<TableRow>().Count();
-			int currentColumnCount =
-				table.Elements<TableRow>().First().Elements<TableCell>().Count();
+        if (table != null)
+        {
+            // Получаем текущее количество строк и столбцов в таблице
+            int currentRowCount = table.Elements<TableRow>().Count();
+            int currentColumnCount =
+                table.Elements<TableRow>().First().Elements<TableCell>().Count();
 
             for (int rowIndex = 0; rowIndex < rowsData.Count; rowIndex++)
             {
@@ -167,10 +167,9 @@ public class RPDGenerator : IRPDGenerator
 
                 var row = table.Elements<TableRow>().ElementAt(rowIndex);
 
-
-				for (int columnIndex = 0; columnIndex < rowData.Count; columnIndex++)
-				{
-					string cellValue = rowData[columnIndex].ToString();
+                for (int columnIndex = 0; columnIndex < rowData.Count; columnIndex++)
+                {
+                    string cellValue = rowData[columnIndex].ToString();
 
                     var cell =
                         row.Elements<TableCell>().ElementAtOrDefault(columnIndex) == null
@@ -196,30 +195,35 @@ public class RPDGenerator : IRPDGenerator
         }
     }
 
-    
-private void InsertEnumerationItemsInText(WordprocessingDocument doc, string holder, List<string> itemsData)
-{
-    // Находим все элементы Text, содержащие плейсхолдер.
-    var paragraphsContainingHolder = doc.MainDocumentPart.Document.Body.Descendants<Paragraph>()
-        .Where(p => p.InnerText.Contains(holder)).ToList();
-
-    foreach (var paragraph in paragraphsContainingHolder)
+    private void InsertEnumerationItemsInText(WordprocessingDocument doc,
+                                              string holder,
+                                              List<string> itemsData)
     {
-        var parent = paragraph.Parent; // Получаем родительский элемент для текущего Paragraph
+        // Находим все элементы Text, содержащие плейсхолдер.
+        var paragraphsContainingHolder =
+            doc.MainDocumentPart.Document.Body.Descendants<Paragraph>()
+                .Where(p => p.InnerText.Contains(holder))
+                .ToList();
 
-        // Создаём новый абзац для каждого элемента списка.
-        foreach (var item in itemsData)
+        foreach (var paragraph in paragraphsContainingHolder)
         {
-            var newParagraph = new Paragraph(new Run(new Text("- " + item)));
-            parent.InsertAfter(newParagraph, paragraph);
+            var parent =
+                paragraph
+                    .Parent; // Получаем родительский элемент для текущего Paragraph
+
+            // Создаём новый абзац для каждого элемента списка.
+            foreach (var item in itemsData)
+            {
+                var newParagraph = new Paragraph(new Run(new Text("- " + item)));
+                parent.InsertAfter(newParagraph, paragraph);
+            }
+
+            // Удаление исходного абзаца с плейсхолдером, если необходимо.
+            // Можно также заменить текст внутри плейсхолдера на первый элемент
+            // списка, если не хотите удалять весь абзац.
+            paragraph.Remove();
         }
-
-        // Удаление исходного абзаца с плейсхолдером, если необходимо.
-        // Можно также заменить текст внутри плейсхолдера на первый элемент списка, если не хотите удалять весь абзац.
-        paragraph.Remove();
     }
-}
-
 
     public static Table FindTableByPlaceholder(WordprocessingDocument document,
                                                string placeholder)
@@ -250,47 +254,43 @@ private void InsertEnumerationItemsInText(WordprocessingDocument doc, string hol
         return null;
     }
 
-	private void ConvertToPdfUsingLibreOffice(string inputPath,
-											  string outputPath)
-	{
-		try
-		{
-			var startInfo = new ProcessStartInfo
-			{
-				FileName = @"C:\Program Files (x86)\LibreOffice4\program\soffice.exe",
-				Arguments =
-				  $"--convert-to pdf --outdir \"{Path.GetDirectoryName(outputPath)}\" \"{inputPath}\"",
-				RedirectStandardOutput = false,
-				UseShellExecute = false,
-				CreateNoWindow = true
-			};
-			startInfo.CreateNoWindow = true;
-			Console.WriteLine(startInfo.Arguments);
-			var process = new Process(){ StartInfo = startInfo};
-			process.Start();
-			process.WaitForExit();
-						var outputFileName =
-				Path.GetFileNameWithoutExtension(inputPath) + ".pdf";
-			var generatedPdfPath =
-				Path.Combine(Path.GetDirectoryName(outputPath), outputFileName);
-			if (!File.Exists(generatedPdfPath))
-			{
-				throw new FileNotFoundException();
+    private void ConvertToPdfUsingLibreOffice(string inputPath,
+                                              string outputPath)
+    {
+        try
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = @"C:\Program Files (x86)\LibreOffice4\program\soffice.exe",
+                Arguments =
+                  $"--convert-to pdf --outdir \"{Path.GetDirectoryName(outputPath)}\" \"{inputPath}\"",
+                RedirectStandardOutput = false,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            startInfo.CreateNoWindow = true;
+            Console.WriteLine(startInfo.Arguments);
+            var process = new Process() { StartInfo = startInfo };
+            process.Start();
+            process.WaitForExit();
+            var outputFileName = Path.GetFileNameWithoutExtension(inputPath) + ".pdf";
+            var generatedPdfPath =
+                Path.Combine(Path.GetDirectoryName(outputPath), outputFileName);
+            if (!File.Exists(generatedPdfPath))
+            {
+                throw new FileNotFoundException();
+            }
 
-					
-			}
-			
-			File.Move(generatedPdfPath, outputPath, true);
-			process.CloseMainWindow();
-			process.Close();
+            File.Move(generatedPdfPath, outputPath, true);
+            process.CloseMainWindow();
+            process.Close();
 
-
-		}
-		catch (Exception ex)
-		{
-			// Логирование или обработка ошибки конвертации
-			throw new InvalidOperationException(
-				$"Ошибка при конвертации файла в PDF: {ex.Message}", ex);
-		}
-	}
+        }
+        catch (Exception ex)
+        {
+            // Логирование или обработка ошибки конвертации
+            throw new InvalidOperationException(
+                $"Ошибка при конвертации файла в PDF: {ex.Message}", ex);
+        }
+    }
 }

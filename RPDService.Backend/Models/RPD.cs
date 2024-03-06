@@ -38,8 +38,6 @@ public class CriticalInfo
 	public string? ExamHours { get; set; }
 	public string? SRS { get; set; }
 	public string? TypeOfControl { get; set; }
-    public List<List<string>>? TestTable {get; set;}
-    public List<string>? Competencies {get; set;}
 
 	public static string GetTypeOfExam(bool Test, bool DiffTest, bool KandExam, bool Exam)
 	{
@@ -61,7 +59,18 @@ public class RpdInfo
 	public string CharacteristicsOfTheSubjectArea { get; set; }
 	public string LearningGoals { get; set; }
 	public string RequaredOrNotRequiared { get; set; }
-
-
-
+    public string DirPosAcadDegree {get; set;}
+    public string Initials {get; set;}
+    public string NameOfTheFieldOfStudy{get; set;}
+    public string TheNameOfTheOrientation{get;set;}
+    public string CreatorDegree{get; set;}
+    public string CreatorInitials{get;set;}
+    public string HeadDegree {get; set;}
+    public string HeadInititials {get; set;}
+    public string RespDegree {get; set;}
+    public string RespInitials {get;set;}
+    public string ViceDegree {get; set;}
+    public string ViceInitials {get; set;}
+    public string Program {get; set;}
+    public string ZachHours{get; set;}
 }

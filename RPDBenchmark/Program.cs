@@ -18,60 +18,74 @@ class Benchmark
         // Создаем экземпляр генератора
         IRPDGenerator RPDGenerator = new RPDGenerator(configuration);
 
-        // Пример JSON для тестированиястированияваниястирования
+        // Пример JSON для
+        // тестированиястированияваниястирования�рованияваниястирования
         RPD rpd = new RPD
         {
-            CriticalInfo = new CriticalInfo
-            {
+            CriticalInfo =
+              new CriticalInfo
+              {
 
-                Faculty = "Высшая черная магия",
-                Zach = "зачетно",
-                SpecialtyNumber = "9 и 3/4",
-                SPZ = "Хз че это",
-                FO = "фууууу",
-                GroupName = "М211",
-                Name = "ЛЕХА",
-                NumberOfDepartament = "Департамент всевышней надобности",
-                TypeOfCourseProject = "Курсовик кста надо делать(",
-                CountOfHourLecture = "9999999",
-                CountOfHourPractice = "0",
-                CountOfHourLab = "-9999999",
-                CountOfHourCourseProject = "ПОМОГИТЕ АААА!!!!",
-                CountOfHourCourseWork = "Заставляют датасеты размечать",
-                ExamHours = "Тихо тихо",
-                SRS = "Спаси Россию Сохрани",
-                TypeOfControl = "Контролируют знатно",
-                TestTable =
-              new List<List<string>> {
-
-            new List<string> {""},
-            new List<string> { "Строка 1 в списке 1", "Строка 2 в списке 1" ,"Строка 1 в списке 1"},
-            new List<string> { "Строка 1 в списке 2", "Строка 2 в списке 2", "Строка 1 в списке 1"},
-            new List<string> { "Строка 1 в списке 3", "Строка 2 в списке 3" , "Строка 1 в списке 1"}
-              },
-
-                Competencies = new List<string>{
-            "Строка 1",
-            "Строка 2",
-            "Строка 3",
-            "Строка 4",
-            "Строка 5",
-            }
-            }
-
+                  Faculty = "Высшая черная магия",
+                  Zach = "зачетно",
+                  SpecialtyNumber = "9 и 3/4",
+                  SPZ = "Хз че это",
+                  FO = "фууууу",
+                  GroupName = "М211",
+                  Name = "ЛЕХА",
+                  NumberOfDepartament =
+                    "ФПТИ",
+                  TypeOfCourseProject =
+                    "Курсовик кста надо делать(",
+                  CountOfHourLecture = "9999999",
+                  CountOfHourPractice = "0",
+                  CountOfHourLab = "-9999999",
+                  CountOfHourCourseProject = "ПОМОГИТЕ АААА!!!!",
+                  
+                  ExamHours = "Тихо тихо",
+                  SRS = "Спаси Россию Сохрани",
+                  TypeOfControl = "Контролируют знатно",
+                CountOfHourCourseWork =
+                    "Заставляют датасеты размечать",
+              } ,
+            RpdInfo =
+                  new RpdInfo
+                  {
+                      CharacteristicsOfTheSubjectArea =
+                        "Не ну это вообще мрак, зачем вам это, лучше пейте пиво и играйте в Dota2, Комплексный анализ кайф, не надо тут мне",
+                      LearningGoals = "Ворваться с ноги",
+                      RequaredOrNotRequiared = "50/50",
+                      DirPosAcadDegree= "Супер важный",
+                      Initials = "В.В. ...",
+                      NameOfTheFieldOfStudy = "На гения",
+                      TheNameOfTheOrientation = "Ну вы поняли",
+                      CreatorDegree = "Без должностной",
+                      CreatorInitials ="Не В.В. ...",
+                      HeadDegree = "Не супер важный",
+                      HeadInititials = "Я",
+                      RespDegree = "+ rep",
+                      RespInitials = "- rep",
+                      ViceDegree = "Его нет",
+                      ViceInitials = "Говорю же что нет",
+                      Program = "На первом канале",
+                      ZachHours = "0"
+                  }
+        
 
         };
+        Console.WriteLine(Environment.MachineName);
+        // Конец JSON объекта
+        // Вызываем метод для генерации документа
+        byte[] documentBytes = RPDGenerator.GetRPDPdfBytes(rpd);
 
-    // Конец JSON объекта
-    // Вызываем метод для генерации документа
-    byte[] documentBytes = RPDGenerator.GetRPDPdfBytes(rpd);
-
-    // Здесь вы можете добавить код для сохранения byte[] в файл, если это
-    // необходимо, чтобы проверить результат в виде документа Word.
-    string outputPath = "output.pdf";
-    System.IO.File.WriteAllBytes(outputPath, documentBytes);
+        // Здесь вы можете добавить код для
+        // сохранения byte[] в файл, если это
+        // необходимо, чтобы проверить результат в
+        // виде документа Word.
+        string outputPath = "output.pdf";
+        System.IO.File.WriteAllBytes(outputPath, documentBytes);
 
         Console.WriteLine(
             $"Документ успешно создан и сохранен как {outputPath}");
-  }
+    }
 }
