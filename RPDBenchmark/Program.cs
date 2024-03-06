@@ -18,7 +18,7 @@ class Benchmark
         // Создаем экземпляр генератора
         IRPDGenerator RPDGenerator = new RPDGenerator(configuration);
 
-        // Пример JSON для тестирования
+        // Пример JSON для тестированиястированияваниястирования
         RPD rpd = new RPD
         {
             CriticalInfo = new CriticalInfo
@@ -40,19 +40,38 @@ class Benchmark
                 CountOfHourCourseWork = "Заставляют датасеты размечать",
                 ExamHours = "Тихо тихо",
                 SRS = "Спаси Россию Сохрани",
-                TypeOfControl = "Контролируют знатно"
+                TypeOfControl = "Контролируют знатно",
+                TestTable =
+              new List<List<string>> {
+
+            new List<string> {""},
+            new List<string> { "Строка 1 в списке 1", "Строка 2 в списке 1" ,"Строка 1 в списке 1"},
+            new List<string> { "Строка 1 в списке 2", "Строка 2 в списке 2", "Строка 1 в списке 1"},
+            new List<string> { "Строка 1 в списке 3", "Строка 2 в списке 3" , "Строка 1 в списке 1"}
+              },
+
+                Competencies = new List<string>{
+            "Строка 1",
+            "Строка 2",
+            "Строка 3",
+            "Строка 4",
+            "Строка 5",
             }
+            }
+
+
         };
 
-        // Конец JSON объекта
-        // Вызываем метод для генерации документа
-        byte[] documentBytes = RPDGenerator.GetRPDPdfBytes(rpd);
+    // Конец JSON объекта
+    // Вызываем метод для генерации документа
+    byte[] documentBytes = RPDGenerator.GetRPDPdfBytes(rpd);
 
-        // Здесь вы можете добавить код для сохранения byte[] в файл, если это
-        // необходимо, чтобы проверить результат в виде документа Word.
-        string outputPath = "output.pdf";
-        System.IO.File.WriteAllBytes(outputPath, documentBytes);
+    // Здесь вы можете добавить код для сохранения byte[] в файл, если это
+    // необходимо, чтобы проверить результат в виде документа Word.
+    string outputPath = "output.pdf";
+    System.IO.File.WriteAllBytes(outputPath, documentBytes);
 
-        Console.WriteLine($"Документ успешно создан и сохранен как {outputPath}");
-    }
+        Console.WriteLine(
+            $"Документ успешно создан и сохранен как {outputPath}");
+  }
 }

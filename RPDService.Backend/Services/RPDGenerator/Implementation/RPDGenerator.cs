@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Diagnostics;
-using  RPDSerice.Models;
+using RPDSerice.Models;
 
 namespace RPDSerice.RPDGenerator.Implementation;
 
@@ -38,12 +38,69 @@ public class RPDGenerator : IRPDGenerator
                        WordprocessingDocument.Open(tempFilePath, true))
             {
                 var body = doc.MainDocumentPart.Document.Body;
-                var stringProperties = typeof(CriticalInfo).GetProperties()
-            .Where(prop => prop.PropertyType == typeof(string))
-            .Select(prop => new {prop.Name, Value = prop.GetValue(rpd.CriticalInfo)?.ToString() });
-               foreach (var stringProperty in stringProperties) {
-                   ReplacePlaceholderInText(body, $"{{{stringProperty.Name}}}" , stringProperty.Value);
-               };
+                var stringProperties =
+                    typeof(CriticalInfo)
+                        .GetProperties()
+                        .Where(prop => prop.PropertyType == typeof(string))
+                        .Select(prop => new
+                        {
+                            prop.Name,
+                            Value = prop.GetValue(rpd.CriticalInfo)?.ToString()
+                        });
+                var listOfStringProperties =
+                    typeof(CriticalInfo)
+                        .GetProperties()
+                        .Where(prop => prop.PropertyType.IsGenericType &&
+                                       prop.PropertyType.GetGenericTypeDefinition() ==
+                                           typeof(List<>) &&
+                                       prop.PropertyType.GenericTypeArguments[0] ==
+                                           typeof(string))
+                        .Select(prop => new
+                        {
+                            prop.Name,
+                            Value = (List<string>)prop.GetValue(
+                                                  rpd.CriticalInfo)
+                        });
+                var listOfListOfStringProperties =
+                    typeof(CriticalInfo)
+                        .GetProperties()
+                        .Where(prop =>
+                                   prop.PropertyType.IsGenericType &&
+                                   prop.PropertyType.GetGenericTypeDefinition() ==
+                                       typeof(List<>) &&
+                                   prop.PropertyType.GenericTypeArguments[0]
+                                       .IsGenericType &&
+                                   prop.PropertyType.GenericTypeArguments[0]
+                                           .GetGenericTypeDefinition() ==
+                                       typeof(List<>) &&
+                                   prop.PropertyType.GenericTypeArguments[0]
+                                           .GenericTypeArguments[0] == typeof(string))
+                        .Select(prop => new
+                        {
+                            prop.Name,
+                            Value = (List<List<string>>)prop.GetValue(
+                                                  rpd.CriticalInfo)
+                        });
+
+                foreach (var stringProperty in stringProperties)
+                {
+                    ReplacePlaceholderInText(body, $"{{{stringProperty.Name}}}",
+                                             stringProperty.Value);
+                }
+                foreach (var listOfStringProperty in listOfStringProperties)
+                {
+                    
+                    InsertEnumerationItemsInText(doc, $"{{{listOfStringProperty.Name}}}",
+                                                 listOfStringProperty.Value);
+                }
+                foreach (var listOfListOfStringProperty in
+                             listOfListOfStringProperties)
+                {
+                    AddRowsToTable(body,
+                                   FindTableByPlaceholder(
+                                       doc, $"{{{listOfListOfStringProperty.Name}}}"),
+                                   listOfListOfStringProperty.Value);
+                }
             }
             ConvertToPdfUsingLibreOffice(tempFilePath, outputPdfPath);
             if (!File.Exists(outputPdfPath))
@@ -57,7 +114,7 @@ public class RPDGenerator : IRPDGenerator
         }
         catch (Exception ex)
         {
-            
+
             throw new InvalidOperationException(
                 "Произошла ошибка при генерации PDF документа из шаблона.", ex);
         }
@@ -74,26 +131,20 @@ public class RPDGenerator : IRPDGenerator
     private void ReplacePlaceholderInText(Body body, string placeholder,
                                           string text)
     {
-            // Поиск текстовых элементов, содержащих искомый текст
-            var textsContainingSearchText = body.Descendants<Text>()
-                                                .Where(t => t.Text.Contains(placeholder));
-            foreach (var textElement in textsContainingSearchText)
-            {
-               textElement.Text = textElement.Text.Replace(placeholder, text);
-            }
+        // Поиск текстовых элементов, содержащих искомый текст
+        var textsContainingSearchText =
+            body.Descendants<Text>().Where(t => t.Text.Contains(placeholder));
+        foreach (var textElement in textsContainingSearchText)
+        {
+            textElement.Text = textElement.Text.Replace(placeholder, text);
+        }
     }
 
-    private void AddRowsToTable(Body body, int tableIndex, JArray rowsData)
+    private void AddRowsToTable(Body body, Table table,
+                                List<List<string>> rowsData)
     {
-        // Проверяем, что индекс таблицы находится в допустимом диапазоне
-        if (tableIndex < 0 || tableIndex >= body.Elements<Table>().Count())
-        {
-            throw new ArgumentOutOfRangeException(nameof(tableIndex),
-                                                  "Номер таблицы вне диапазона.");
-        }
 
         // Получаем таблицу по индексу
-        var table = body.Elements<Table>().ElementAt(tableIndex);
 
         if (table != null)
         {
@@ -104,27 +155,36 @@ public class RPDGenerator : IRPDGenerator
 
             for (int rowIndex = 0; rowIndex < rowsData.Count; rowIndex++)
             {
-                JArray rowData = (JArray)rowsData[rowIndex];
+                List<string> rowData = rowsData[rowIndex];
 
                 // Добавляем новую строку, если в JSON больше строк, чем в таблице
                 if (rowIndex >= currentRowCount)
                 {
-                    
+
                     table.Append(new TableRow());
-                    
                 }
 
                 var row = table.Elements<TableRow>().ElementAt(rowIndex);
-                
 
                 for (int columnIndex = 0; columnIndex < rowData.Count; columnIndex++)
                 {
                     string cellValue = rowData[columnIndex].ToString();
 
-                    var cell = row.Elements<TableCell>().ElementAtOrDefault(columnIndex)== null? row.AppendChild(new TableCell()): row.Elements<TableCell>().ElementAtOrDefault(columnIndex);
-                    var cellParagraph = cell.Elements<Paragraph>().Count()!=0 ? cell.Elements<Paragraph>().First(): cell.AppendChild(new Paragraph()); 
-                    var cellRun = cellParagraph.Elements<Run>().Count()!=0 ? cellParagraph.Elements<Run>().First(): cellParagraph.AppendChild(new Run()); 
-                    var cellText = cellRun.Elements<Text>().Count()!=0 ? cellRun.Elements<Text>().First(): cellRun.AppendChild(new Text(cellValue)); // Заменяем текст в ячейке, если ячейка JSON не пустая
+                    var cell =
+                        row.Elements<TableCell>().ElementAtOrDefault(columnIndex) == null
+                            ? row.AppendChild(new TableCell())
+                            : row.Elements<TableCell>().ElementAtOrDefault(columnIndex);
+                    var cellParagraph = cell.Elements<Paragraph>().Count() != 0
+                                            ? cell.Elements<Paragraph>().First()
+                                            : cell.AppendChild(new Paragraph());
+                    var cellRun = cellParagraph.Elements<Run>().Count() != 0
+                                      ? cellParagraph.Elements<Run>().First()
+                                      : cellParagraph.AppendChild(new Run());
+                    var cellText = cellRun.Elements<Text>().Count() != 0
+                                       ? cellRun.Elements<Text>().First()
+                                       : cellRun.AppendChild(new Text(
+                                             cellValue)); // Заменяем текст в ячейке, если
+                                                          // ячейка JSON не пустая
                     if (!string.IsNullOrEmpty(cellValue))
                     {
                         cellText.Text = cellValue;
@@ -134,28 +194,58 @@ public class RPDGenerator : IRPDGenerator
         }
     }
 
-    private void InsertEnumerationItemsInText(Body body, string holder,
-                                              JArray itemsData)
-    {
-        var paragraphs = body.Elements<Paragraph>();
-        foreach (var paragraph in paragraphs)
-        {
-            foreach (var run in paragraph.Elements<Run>())
-            {
-                foreach (var textElement in run.Elements<Text>())
-                {
-                    if (textElement.Text.Contains(holder))
-                    {
-                        var items =
-                            string.Join(",\n- ", itemsData.Select(item => item.ToString()));
+    
+private void InsertEnumerationItemsInText(WordprocessingDocument doc, string holder, List<string> itemsData)
+{
+    // Находим все элементы Text, содержащие плейсхолдер.
+    var paragraphsContainingHolder = doc.MainDocumentPart.Document.Body.Descendants<Paragraph>()
+        .Where(p => p.InnerText.Contains(holder)).ToList();
 
-                        // Заменяем плейсхолдер {{enum}} в тексте на сформированный список
-                        // элементов
-                        textElement.Text = textElement.Text.Replace(holder, "- " + items);
+    foreach (var paragraph in paragraphsContainingHolder)
+    {
+        var parent = paragraph.Parent; // Получаем родительский элемент для текущего Paragraph
+
+        // Создаём новый абзац для каждого элемента списка.
+        foreach (var item in itemsData)
+        {
+            var newParagraph = new Paragraph(new Run(new Text("- " + item)));
+            parent.InsertAfter(newParagraph, paragraph);
+        }
+
+        // Удаление исходного абзаца с плейсхолдером, если необходимо.
+        // Можно также заменить текст внутри плейсхолдера на первый элемент списка, если не хотите удалять весь абзац.
+        paragraph.Remove();
+    }
+}
+
+
+    public static Table FindTableByPlaceholder(WordprocessingDocument document,
+                                               string placeholder)
+    {
+        // Получаем основную часть документа
+        var mainPart = document.MainDocumentPart;
+
+        // Перебираем все таблицы в документе
+        var tables = mainPart.Document.Body.Elements<Table>();
+        foreach (var table in tables)
+        {
+            // Перебираем все строки в каждой таблице
+            foreach (var row in table.Elements<TableRow>())
+            {
+                // Перебираем все ячейки в каждой строке
+                foreach (var cell in row.Elements<TableCell>())
+                {
+                    // Проверяем, содержит ли текст в ячейке искомый плейсхолдер
+                    if (cell.InnerText.Contains(placeholder))
+                    {
+                        return table;
                     }
                 }
             }
         }
+
+        // Возвращаем null, если таблица с таким плейсхолдером не найдена
+        return null;
     }
 
     private void ConvertToPdfUsingLibreOffice(string inputPath,

@@ -38,7 +38,9 @@ public class CriticalInfo
 	public string? ExamHours { get; set; }
 	public string? SRS { get; set; }
 	public string? TypeOfControl { get; set; }
-	
+    public List<List<string>>? TestTable {get; set;}
+    public List<string>? Competencies {get; set;}
+
 	public static string GetTypeOfExam(bool Test, bool DiffTest, bool KandExam, bool Exam)
 	{
 		if (Test) return "test";
