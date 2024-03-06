@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using RPDSerice.Inital;
 using RPDSerice.RpdRepository.Implementation;
+using RPDSerice.RpdRepository.SearchEngine;
 var builder = WebApplication.CreateBuilder(args);
 
 IConfigurationRoot configuration = new ConfigurationManager();
@@ -35,6 +36,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddTransient<RpdRepository>();
+builder.Services.AddScoped<RpdSearchEngine>();
 builder.Services.AddTransient<IRPDGenerator, RPDGenerator>();
 builder.Services.AddScoped<IRPDGenerator, RPDGenerator>();
 builder.Services.AddSingleton<IRPDGenerator, RPDGenerator>();

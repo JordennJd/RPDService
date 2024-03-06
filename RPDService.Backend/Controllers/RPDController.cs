@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using RPDSerice.Models;
 using RPDSerice.RPDGenerator.Interfaces;
 using RPDSerice.RpdRepository.Implementation;
+using RPDSerice.RpdRepository.SearchEngine;
 using RPDService.Dtos;
 namespace RPDService.Controllers;
 
@@ -12,8 +13,10 @@ public class RPDController : ControllerBase
 {
 	private readonly IRPDGenerator _RPDGenerator;
 	private readonly RpdRepository _RpdRepository;
-	public RPDController(IRPDGenerator RPDGenerator, RpdRepository RpdRepository)
+	private readonly RpdSearchEngine _rpdSearchEngine;
+	public RPDController(IRPDGenerator RPDGenerator, RpdRepository RpdRepository, RpdSearchEngine rpdSearchEngine)
 	{
+		_rpdSearchEngine = rpdSearchEngine;
 		_RpdRepository = RpdRepository;
 		_RPDGenerator = RPDGenerator;
 	}
@@ -43,13 +46,13 @@ public class RPDController : ControllerBase
 	[HttpPost]	
 	public IActionResult SearchRpd(CriticalInfo dto)
 	{
-		return Ok(_RpdRepository.SearchRpd(dto).ToList());
+		return Ok(_rpdSearchEngine.SearchRpdByCriticalInfo(dto).ToList());
 	}
 
 	[HttpPost]
 	public IActionResult SearchCriticalInfos(CriticalInfo info)
 	{
-		return Ok(_RpdRepository.SearchCriticalInfoByCriticalInfo(info).ToList());
+		return Ok(_rpdSearchEngine.SearchCriticalInfoByCriticalInfo(info).ToList());
 	}
 	[HttpPost]
 	public IActionResult ChangeCriticalInfos(ChangeCriticalDto dto)
@@ -66,6 +69,13 @@ public class RPDController : ControllerBase
 	[HttpPost]
 	public IActionResult ChangeRpdInfosByRpd(ChangeRpdInfoDtoByRpd dto)
 	{
+		_RpdRepository.ChangeRpdInfoByRpd(dto);
+		return Ok();
+	}
+	[HttpPost]
+	public IActionResult DeleteRPD(RPD dto)
+	{
+		_RpdRepository.DeleteRPD(dto);
 		return Ok();
 	}
 }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RPDBenchmark")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e648d8d964e97989f6fd1922b35de4f553af42e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c604e3797b8a36a01d1ae61b239cf142d396b037")]
 [assembly: System.Reflection.AssemblyProductAttribute("RPDBenchmark")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RPDBenchmark")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
