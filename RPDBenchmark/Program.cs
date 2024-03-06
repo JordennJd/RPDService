@@ -62,7 +62,7 @@ class Benchmark
                       CreatorDegree = "Без должностной",
                       CreatorInitials ="Не В.В. ...",
                       HeadDegree = "Не супер важный",
-                      HeadInititials = "Я",
+                      HeadInitials = "Я",
                       RespDegree = "+ rep",
                       RespInitials = "- rep",
                       ViceDegree = "Его нет",

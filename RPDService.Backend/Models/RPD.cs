@@ -66,7 +66,7 @@ public class RpdInfo
     public string CreatorDegree{get; set;}
     public string CreatorInitials{get;set;}
     public string HeadDegree {get; set;}
-    public string HeadInititials {get; set;}
+    public string HeadInitials {get; set;}
     public string RespDegree {get; set;}
     public string RespInitials {get;set;}
     public string ViceDegree {get; set;}
