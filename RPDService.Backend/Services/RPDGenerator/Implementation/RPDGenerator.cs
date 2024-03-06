@@ -9,29 +9,29 @@ namespace RPDSerice.RPDGenerator.Implementation;
 
 public class RPDGenerator : IRPDGenerator
 {
-    string templateFilePath;
-    string tempFilePath;
-    string outputPdfPath;
-    public RPDGenerator(IConfiguration configrution)
-    {
-        templateFilePath = configrution["Path:templateFilePath"] ??
-                           "Services/RPDGenerator/RPDTemplate/Template.docx";
-        tempFilePath = configrution["Path:tempFilePath"] ??
-                       "Services/RPDGenerator/RPDTemplate/temp.docx";
-        outputPdfPath = configrution["Path:outputPdfPath"] ??
-                        "Services/RPDGenerator/RPDTemplate/output.pdf";
-    }
+	string templateFilePath;
+	string tempFilePath;
+	string outputPdfPath;
+	public RPDGenerator(IConfiguration configrution)
+	{
+		templateFilePath = configrution["Path:templateFilePath:" + Environment.MachineName] ??
+						   "Services/RPDGenerator/RPDTemplate/Template.docx";
+		tempFilePath = configrution["Path:tempFilePath:" + Environment.MachineName] ??
+					   "Services/RPDGenerator/RPDTemplate/temp.docx";
+		outputPdfPath = configrution["Path:outputPdfPath:" + Environment.MachineName] ??
+						"Services/RPDGenerator/RPDTemplate/output.pdf";
+	}
 
-    public Byte[] GetRPDPdfBytes(RPD rpd)
-    {
-        try
-        {
-            if (!File.Exists(templateFilePath))
-            {
-                throw new FileNotFoundException(
-                    $"Шаблонный файл не найден: {templateFilePath}");
-            }
-            File.Copy(templateFilePath, tempFilePath, true);
+	public Byte[] GetRPDPdfBytes(RPD rpd)
+	{
+		try
+		{
+			if (!File.Exists(templateFilePath))
+			{
+				throw new FileNotFoundException(
+					$"Шаблонный файл не найден: {templateFilePath}");
+			}
+			File.Copy(templateFilePath, tempFilePath, true);
 
             // Открытие документа
             using (WordprocessingDocument doc =
@@ -146,12 +146,13 @@ public class RPDGenerator : IRPDGenerator
 
         // Получаем таблицу по индексу
 
-        if (table != null)
-        {
-            // Получаем текущее количество строк и столбцов в таблице
-            int currentRowCount = table.Elements<TableRow>().Count();
-            int currentColumnCount =
-                table.Elements<TableRow>().First().Elements<TableCell>().Count();
+
+		if (table != null)
+		{
+			// Получаем текущее количество строк и столбцов в таблице
+			int currentRowCount = table.Elements<TableRow>().Count();
+			int currentColumnCount =
+				table.Elements<TableRow>().First().Elements<TableCell>().Count();
 
             for (int rowIndex = 0; rowIndex < rowsData.Count; rowIndex++)
             {
@@ -166,9 +167,10 @@ public class RPDGenerator : IRPDGenerator
 
                 var row = table.Elements<TableRow>().ElementAt(rowIndex);
 
-                for (int columnIndex = 0; columnIndex < rowData.Count; columnIndex++)
-                {
-                    string cellValue = rowData[columnIndex].ToString();
+
+				for (int columnIndex = 0; columnIndex < rowData.Count; columnIndex++)
+				{
+					string cellValue = rowData[columnIndex].ToString();
 
                     var cell =
                         row.Elements<TableCell>().ElementAtOrDefault(columnIndex) == null
@@ -248,44 +250,47 @@ private void InsertEnumerationItemsInText(WordprocessingDocument doc, string hol
         return null;
     }
 
-    private void ConvertToPdfUsingLibreOffice(string inputPath,
-                                              string outputPath)
-    {
-        try
-        {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = "soffice",
-                Arguments =
-                  $"--convert-to pdf --outdir \"{Path.GetDirectoryName(outputPath)}\" \"{inputPath}\"",
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+	private void ConvertToPdfUsingLibreOffice(string inputPath,
+											  string outputPath)
+	{
+		try
+		{
+			var startInfo = new ProcessStartInfo
+			{
+				FileName = @"C:\Program Files (x86)\LibreOffice4\program\soffice.exe",
+				Arguments =
+				  $"--convert-to pdf --outdir \"{Path.GetDirectoryName(outputPath)}\" \"{inputPath}\"",
+				RedirectStandardOutput = false,
+				UseShellExecute = false,
+				CreateNoWindow = true
+			};
+			startInfo.CreateNoWindow = true;
+			Console.WriteLine(startInfo.Arguments);
+			var process = new Process(){ StartInfo = startInfo};
+			process.Start();
+			process.WaitForExit();
+						var outputFileName =
+				Path.GetFileNameWithoutExtension(inputPath) + ".pdf";
+			var generatedPdfPath =
+				Path.Combine(Path.GetDirectoryName(outputPath), outputFileName);
+			if (!File.Exists(generatedPdfPath))
+			{
+				throw new FileNotFoundException();
 
-            using (var process = Process.Start(startInfo))
-            {
-                process.WaitForExit();
+					
+			}
+			
+			File.Move(generatedPdfPath, outputPath, true);
+			process.CloseMainWindow();
+			process.Close();
 
-                // Проверка успешности конвертации
-                var outputFileName =
-                    Path.GetFileNameWithoutExtension(inputPath) + ".pdf";
-                var generatedPdfPath =
-                    Path.Combine(Path.GetDirectoryName(outputPath), outputFileName);
-                if (!File.Exists(generatedPdfPath))
-                {
-                    throw new FileNotFoundException(
-                        "Не удалось найти сгенерированный PDF файл после конвертации.");
-                }
 
-                File.Move(generatedPdfPath, outputPath, true);
-            }
-        }
-        catch (Exception ex)
-        {
-            // Логирование или обработка ошибки конвертации
-            throw new InvalidOperationException(
-                $"Ошибка при конвертации файла в PDF: {ex.Message}", ex);
-        }
-    }
+		}
+		catch (Exception ex)
+		{
+			// Логирование или обработка ошибки конвертации
+			throw new InvalidOperationException(
+				$"Ошибка при конвертации файла в PDF: {ex.Message}", ex);
+		}
+	}
 }

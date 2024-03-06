@@ -12,7 +12,7 @@ namespace RPDSerice.RPDGenerator.DocumentHelper
         public static void ReplacePlaceholders(WordprocessingDocument doc, string placeholder, string replacement)
         {
             var body = doc.MainDocumentPart.Document.Body;
-
+            
             // Обработка всех параграфов
             foreach (var paragraph in body.Elements<Paragraph>())
             {

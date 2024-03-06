@@ -24,9 +24,7 @@ public class RPDController : ControllerBase
 	public IActionResult GenerateRPD(RPD rpd)
 	{
 		var doc = _RPDGenerator.GetRPDPdfBytes(rpd);
-		string outputPath = "output.pdf";
-		System.IO.File.WriteAllBytes(outputPath, doc);
-		Console.WriteLine($"Документ успешно создан и сохранен как {outputPath}");
+		return File(doc, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "example.docx");
 		return Ok(doc);
 	}
 	[HttpPost]
