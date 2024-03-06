@@ -61,7 +61,7 @@ class Benchmark
                       TheNameOfTheOrientation = "Ну вы поняли",
                       CreatorDegree = "Без должностной",
                       HeadDegree = "Не супер важный",
-                      HeadInititials = "Я",
+                      HeadInitials = "Я",
                       RespDegree = "+ rep",
                       RespInitials = "- rep",
                       ViceDegree = "Его нет",
