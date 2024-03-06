@@ -23,8 +23,11 @@ public class RPDController : ControllerBase
 	[HttpPost]
 	public IActionResult GenerateRPD(RPD rpd)
 	{
-		_RPDGenerator.GetRPDPdfBytes(rpd);
-		return Ok("Hello World");
+		var doc = _RPDGenerator.GetRPDPdfBytes(rpd);
+		string outputPath = "output.pdf";
+		System.IO.File.WriteAllBytes(outputPath, doc);
+		Console.WriteLine($"Документ успешно создан и сохранен как {outputPath}");
+		return Ok(doc);
 	}
 	[HttpPost]
 	public IActionResult CreateRPD(RPD rpd)
