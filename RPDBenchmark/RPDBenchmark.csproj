@@ -4,6 +4,10 @@
     <ProjectReference Include="..\RPDService.Backend\RPDSerice.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
