@@ -1,12 +1,13 @@
 ﻿using RPDSerice.RPDGenerator.Implementation;
 using RPDSerice.RPDGenerator.Interfaces;
 using Microsoft.Extensions.Configuration;
+using RPDSerice.Models;
 namespace Benchmark;
 
 class Benchmark
 {
-  
-  public static void Main()
+
+    public static void Main()
     {
 
         var configuration = new ConfigurationBuilder()
@@ -18,52 +19,34 @@ class Benchmark
         IRPDGenerator RPDGenerator = new RPDGenerator(configuration);
 
         // Пример JSON для тестирования
-
-        string jsonRPD = "{"; // Начало JSON объекта
-        for (int i = 0; i < 50; i++)
+        RPD rpd = new RPD
         {
-            // Добавляем элементы, используя двойные кавычки и убираем запятую для
-            // последнего элемента
-            jsonRPD += $"\n\"{{{{TEXT_{i}}}}}\":\"ПРОВЕРКА {i}\",";
-        }
-        jsonRPD  += $@"
-  ""{{{{TABLE_1}}}}"": [
-    [""""],
-    [""""],
-    [""ТАБЛИЦА_1""],
-    [""""],
-    [""ТАБЛИЦА_1""],
-    [""""],
-    [""ТАБЛИЦА_1""],
-    [""""],
-    [""ТАБЛИЦА_1""]],
-";
-        jsonRPD  += $@"
-  ""{{{{TABLE_1}}}}"": [
-    [""""],
-    [""""],
-    [""""],
-    [""""],
-    [""aaaa""],
-    [""""],
-    [""""],
-    [""""],
-    [""""]],
-";
-        jsonRPD += $@"
-  ""{{{{TABLE_2}}}}"": [
-    ["""", ""ТАБЛИЦА_1""],
-    ["""", ""ТАБЛИЦА_1""],
-    ["""", ""ТАБЛИЦА_1""],
-    ["""", ""ТАБЛИЦА_1""],
-    ["""", ""ТАБЛИЦА_1""]]
-}}
-";
+            CriticalInfo = new CriticalInfo
+            {
+
+                Faculty = "Высшая черная магия",
+                Zach = "зачетно",
+                SpecialtyNumber = "9 и 3/4",
+                SPZ = "Хз че это",
+                FO = "фууууу",
+                GroupName = "М211",
+                Name = "ЛЕХА",
+                NumberOfDepartament = "Департамент всевышней надобности",
+                TypeOfCourseProject = "Курсовик кста надо делать(",
+                CountOfHourLecture = "9999999",
+                CountOfHourPractice = "0",
+                CountOfHourLab = "-9999999",
+                CountOfHourCourseProject = "ПОМОГИТЕ АААА!!!!",
+                CountOfHourCourseWork = "Заставляют датасеты размечать",
+                ExamHours = "Тихо тихо",
+                SRS = "Спаси Россию Сохрани",
+                TypeOfControl = "Контролируют знатно"
+            }
+        };
 
         // Конец JSON объекта
-        Console.WriteLine(jsonRPD);
         // Вызываем метод для генерации документа
-        byte[] documentBytes = RPDGenerator.GetRPDPdfBytes(jsonRPD);
+        byte[] documentBytes = RPDGenerator.GetRPDPdfBytes(rpd);
 
         // Здесь вы можете добавить код для сохранения byte[] в файл, если это
         // необходимо, чтобы проверить результат в виде документа Word.
